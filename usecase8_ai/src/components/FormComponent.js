@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { updateFormData } from '../store/formSlice';
 import isEmail from 'validator/lib/isEmail';
 import isLength from 'validator/lib/isLength';
@@ -76,7 +76,7 @@ const FormComponent = () => {
             {successMessage && (
                 <div className={styles.successMessage}>{successMessage}</div>
             )}
-            <form onSubmit={handleSubmit} className={styles.form}>
+            <form onSubmit={handleSubmit}>
                 <FormInput>
                     <label htmlFor='firstName'>First Name</label>
                     <input
