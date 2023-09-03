@@ -1,0 +1,26 @@
+.formWrapper {
+    max-width: 400px;
+}
+
+.form {
+}
+
+.formInputWrapper {
+    margin: 0.5rem auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.input {
+    border-radius: 10px;
+    border: 1px solid #777;
+    background-color: #555;
+    padding: 0.5rem 1rem;
+    color: #fff;
+    font-size: 1.2rem;
+}
+
+.errorMessage {
+    color: red;
+    font-size: 1rem;
+}
