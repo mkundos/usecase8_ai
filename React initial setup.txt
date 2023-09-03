@@ -347,5 +347,64 @@ The handleSubmit function takes care of dispatching the form data to the Redux s
 The Redux store will now contain the submitted form data after the user hits the "Submit" button.
 
 
+User
+create unit tests for store
+ChatGPT
+Unit tests for a Redux store typically involve testing the actions, reducers, and selectors (if you have any). In this case, since we're using Redux Toolkit, things are simplified a bit. Below are examples of how you could write unit tests for the Redux store.
 
+First, make sure you have the testing libraries installed:
+
+bash
+Copy code
+npm install --save-dev jest @testing-library/react @testing-library/jest-dom @testing-library/user-event
+Then, create your tests:
+
+Testing Reducer and Actions
+
+Create a new file named formSlice.test.js in the src directory and add the following code:
+
+javascript
+Copy code
+import formReducer, { updateFormData } from './formSlice';
+
+describe('formSlice', () => {
+  describe('reducer, actions and selectors', () => {
+    it('should return the initial state on first run', () => {
+      const result = formReducer(undefined, {});
+      expect(result).toEqual({
+        firstName: '',
+        lastName: '',
+        email: '',
+        message: '',
+      });
+    });
+
+    it('should properly update the state with updateFormData', () => {
+      const initialState = {
+        firstName: '',
+        lastName: '',
+        email: '',
+        message: '',
+      };
+      const data = {
+        firstName: 'John',
+        lastName: 'Doe',
+      };
+      const result = formReducer(initialState, updateFormData(data));
+      expect(result).toEqual({
+        ...initialState,
+        ...data,
+      });
+    });
+  });
+});
+In this test file, we're importing our formReducer and updateFormData action creator. We then have two tests:
+
+One to ensure that the reducer returns its initial state when given an undefined state.
+Another to make sure the updateFormData action properly updates the state.
+Run the Tests
+
+To run the tests, you can use the npm test command in your terminal. This will run Jest, and you should see output indicating whether the tests passed or failed.
+
+This should get you started with testing your Redux store in a modern React app. You can add more complex tests as your application grows.
 
