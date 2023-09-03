@@ -1,0 +1,185 @@
+User
+create a component or components to represent form that has such inputs: First name, Last name, email, message. Add validation on each field change with validator.js. All fields are required, message should be 10+ chars long. Form should have cancel and submit buttons. Submit should be disabled until all fields are valid. On submit click all values should be stored in redux store.  On successful data storage show message at the top, which should disappear when new data will be entered. Labels should be binded with inputs. store is created with redux toolkit. On cancel all form inputs should be cleared.
+ChatGPT
+Certainly! Below is a complete example that demonstrates your requirements using React, Redux Toolkit, and validator.js.
+
+First, install the required packages:
+
+bash
+Copy code
+npm install @reduxjs/toolkit react-redux validator
+store.js
+
+javascript
+Copy code
+import { configureStore } from '@reduxjs/toolkit';
+import formReducer from './formSlice';
+
+const store = configureStore({
+  reducer: {
+    form: formReducer,
+  },
+});
+
+export default store;
+formSlice.js
+
+javascript
+Copy code
+import { createSlice } from '@reduxjs/toolkit';
+
+const formSlice = createSlice({
+  name: 'form',
+  initialState: {
+    formData: {},
+    successMessage: null,
+  },
+  reducers: {
+    submitForm: (state, action) => {
+      state.formData = action.payload;
+      state.successMessage = 'Form submitted successfully!';
+    },
+    clearForm: (state) => {
+      state.formData = {};
+      state.successMessage = null;
+    },
+  },
+});
+
+export const { submitForm, clearForm } = formSlice.actions;
+export default formSlice.reducer;
+FormComponent.js
+
+javascript
+Copy code
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { submitForm, clearForm } from './formSlice';
+import isEmail from 'validator/lib/isEmail';
+import isLength from 'validator/lib/isLength';
+
+const FormComponent = () => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    message: '',
+  });
+
+  const [errors, setErrors] = useState({});
+  const [isValid, setIsValid] = useState(false);
+
+  const dispatch = useDispatch();
+  const successMessage = useSelector((state) => state.form.successMessage);
+
+  useEffect(() => {
+    const { firstName, lastName, email, message } = formData;
+    const newErrors = {};
+
+    if (!firstName) newErrors.firstName = 'First name is required';
+    if (!lastName) newErrors.lastName = 'Last name is required';
+    if (!email || !isEmail(email)) newErrors.email = 'Valid email is required';
+    if (!message || !isLength(message, { min: 10 })) newErrors.message = 'Message should be 10+ characters long';
+
+    setErrors(newErrors);
+    setIsValid(Object.keys(newErrors).length === 0);
+  }, [formData]);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (successMessage) dispatch(clearForm());
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(submitForm(formData));
+  };
+
+  const handleCancel = () => {
+    setFormData({
+      firstName: '',
+      lastName: '',
+      email: '',
+      message: '',
+    });
+    dispatch(clearForm());
+  };
+
+  return (
+    <div>
+      {successMessage && <div>{successMessage}</div>}
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="firstName">First Name</label>
+        <input
+          id="firstName"
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleChange}
+        />
+        {errors.firstName && <div>{errors.firstName}</div>}
+
+        <label htmlFor="lastName">Last Name</label>
+        <input
+          id="lastName"
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleChange}
+        />
+        {errors.lastName && <div>{errors.lastName}</div>}
+
+        <label htmlFor="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+        />
+        {errors.email && <div>{errors.email}</div>}
+
+        <label htmlFor="message">Message</label>
+        <textarea
+          id="message"
+          name="message"
+          value={formData.message}
+          onChange={handleChange}
+        />
+        {errors.message && <div>{errors.message}</div>}
+
+        <button type="submit" disabled={!isValid}>
+          Submit
+        </button>
+        <button type="button" onClick={handleCancel}>
+          Cancel
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default FormComponent;
+App.js
+
+javascript
+Copy code
+import React from 'react';
+import { Provider } from 'react-redux';
+import store from './store';
+import FormComponent from './FormComponent';
+
+const App = () => (
+  <Provider store={store}>
+    <FormComponent />
+  </Provider>
+);
+
+export default App;
+This example includes:
+
+Field validation on each field change.
+A submit button that is disabled until all fields are valid.
+Two buttons: "Submit" and "Cancel".
+Storing form data in the Redux store.
+Displaying a success message that disappears when new data is entered.
+Clearing all form inputs on cancel.
+Labels that are associated with inputs using htmlFor.
+This should provide a good starting point to further customize the form and its functionality.

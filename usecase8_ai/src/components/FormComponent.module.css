@@ -1,5 +1,5 @@
 .formWrapper {
-    max-width: 400px;
+    width: 400px;
 }
 
 .form {
@@ -20,7 +20,18 @@
     font-size: 1.2rem;
 }
 
+.successMessage,
 .errorMessage {
     color: red;
     font-size: 1rem;
+}
+.successMessage {
+    color: greenyellow;
+}
+
+.button {
+    padding: 0.5rem 2rem;
+    margin: 0.25rem;
+    font-size: 1rem;
+    border-radius: 10px;
 }
